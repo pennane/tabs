@@ -32,11 +32,15 @@ function emptyChannels(): Channel[] {
 export function parseTabs(tab: string): Tab[] {
     const lines = tab.split("\n")
     const stripped = lines.map(line => {
-        const dashIndex = line.indexOf('-')
+        const dashIndex = line.indexOf('|')
+
         if (dashIndex === -1) return null
-        const lastDashIndex = line.lastIndexOf('-')
+
+        const lastDashIndex = line.lastIndexOf('|')
+
         if (dashIndex === lastDashIndex) return null
-        const inner = line.slice(dashIndex, lastDashIndex + 1)
+
+        const inner = line.slice(dashIndex + 1, lastDashIndex)
         const chars = inner.split("|").join('').split('')
 
         let frets: Fret[] = []
@@ -89,7 +93,7 @@ export function parseTabs(tab: string): Tab[] {
             channels[i].frets = g[i]
         }
         return {
-            bpm: 296,
+            bpm: 250,
             channels
         }
     })

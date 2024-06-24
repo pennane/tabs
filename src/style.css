@@ -23,3 +23,15 @@ pre {
     overflow-x: scroll
 }
 
+button {
+    display: block;
+    width: min-content;
+    border: 1px solid black;
+    border-radius: .25rem;
+    padding: .125rem .5rem;
+    background: transparent;
+    cursor: pointer;
+}
+button:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
