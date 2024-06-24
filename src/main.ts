@@ -13,6 +13,25 @@ input.value = DEFAULT_INPUT_VALUE
 
 function insertTabs(tabs: Tab[]) {
     output.innerHTML = ""
+
+    const wrapper = document.createElement('div')
+    wrapper.classList.add("wrapper")
+    const playButton = document.createElement('button')
+    playButton.textContent = "play all combined"
+    playButton.addEventListener('click', () => playTab(tabs.reduce((a, b) =>
+    ({
+        ...b,
+        channels: b.channels.map((c, i) => ({
+            ...c,
+            frets: a.channels[i].frets.concat(c.frets)
+        }))
+    })
+    )))
+
+    wrapper.appendChild(playButton)
+    output.appendChild(wrapper)
+
+
     for (const tab of tabs) {
         const wrapper = document.createElement('div')
         wrapper.classList.add("wrapper")
