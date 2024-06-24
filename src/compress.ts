@@ -77,7 +77,6 @@ export function compress(input: string): string {
             merged.push(
                 prev === null ? `${count}` : `${count}${COUNT_SEPARATOR}${prev}`
             )
-            console.log(merged, s)
             return merged.join(ENTRY_SEPARATOR)
         })
         .join(CHANNEL_SEPARATOR)
