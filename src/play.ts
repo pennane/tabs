@@ -40,8 +40,11 @@ export async function playTab(tab: Tab) {
 
 
             const frequency = halfStepsToFrequency(rootSteps + fret)
-            const start = startTime + i * beatLength
-            const end = start + noteDuration
+            const offset =
+                (beatLength / (tab.channels.length * 2)) *
+                (tab.channels.length - j)
+            const start = startTime + i * beatLength + offset
+            const end = start + noteDuration + offset
 
             const oscillator = audioCtx.createOscillator()
             oscillator.frequency.setValueAtTime(frequency, start)

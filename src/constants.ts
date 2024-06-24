@@ -1,4 +1,6 @@
 
+export const DEFAULT_BPM = 275
+
 export const DEFAULT_INPUT_VALUE = `
 from https://tabs.ultimate-guitar.com/tab/led-zeppelin/stairway-to-heaven-tabs-9488
 

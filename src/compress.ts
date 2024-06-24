@@ -1,3 +1,4 @@
+import { DEFAULT_BPM } from './constants'
 import { Channel, Tab } from './model'
 import { emptyChannels } from './parse'
 
@@ -130,6 +131,6 @@ export function decompressToTab(input: string): Tab | null {
 
     return {
         channels,
-        bpm: 250
+        bpm: DEFAULT_BPM
     }
 }

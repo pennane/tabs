@@ -1,3 +1,4 @@
+import { DEFAULT_BPM } from "./constants";
 import { Channel, Fret, Note, Tab } from "./model";
 
 export function emptyChannels(): Channel[] {
@@ -101,7 +102,7 @@ export function parseTabs(tab: string): Tab[] {
             channels[i].frets = g[i]
         }
         return {
-            bpm: 250,
+            bpm: DEFAULT_BPM,
             channels
         }
     })
