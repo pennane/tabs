@@ -100,12 +100,13 @@ function createShareLink(tabs: Tab[]) {
 }
 
 
-const parseButton = document.createElement('button')
-parseButton.textContent = "parse"
-parseButton.addEventListener('click', handleParse)
+let timeout: number | undefined = undefined
+input.addEventListener('input', () => {
+    clearTimeout(timeout)
+    timeout = setTimeout(() => handleParse(), 300)
+})
 
 handleParse()
 
 app.appendChild(input)
-app.appendChild(parseButton)
 app.appendChild(output)
