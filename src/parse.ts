@@ -64,6 +64,14 @@ export function parseTabs(tab: string): Tab[] {
             frets.push(null)
         }
 
+        if (n) {
+            frets.push(parseInt(n))
+            for (let i = 1; i < n.length; i++) {
+                frets.push(null)
+            }
+            n = ""
+        }
+
         return frets
     })
 
