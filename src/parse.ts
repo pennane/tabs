@@ -1,6 +1,6 @@
 import { Channel, Fret, Note, Tab } from "./model";
 
-function emptyChannels(): Channel[] {
+export function emptyChannels(): Channel[] {
     return [
         {
             root: { note: Note.E, octave: 4 },

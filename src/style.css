@@ -7,12 +7,26 @@
 .output {
     display: flex;
     flex-direction: column;
-    gap: .5rem;
+    gap: 1rem;
 }
 
 .wrapper {
     padding: .5rem;
     border: 1px solid black;
+}
+
+.sharelink-wrapper {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.tabs-wrapper {
+
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
 }
 
 textarea {
@@ -25,13 +39,14 @@ pre {
 
 button {
     display: block;
-    width: min-content;
+    width: fit-content;
     border: 1px solid black;
     border-radius: .25rem;
     padding: .125rem .5rem;
     background: transparent;
     cursor: pointer;
 }
+
 button:hover {
     background: rgba(0, 0, 0, 0.1);
 }
