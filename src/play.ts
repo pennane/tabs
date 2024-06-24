@@ -13,7 +13,7 @@ export async function playTab(tab: Tab) {
         audioCtx.close()
     }
     audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
-    const buffer = 1;
+    const buffer = .25;
     const startTime = audioCtx.currentTime + buffer
     const beatLength = (60 / tab.bpm) / 2
 
