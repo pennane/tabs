@@ -23,7 +23,6 @@
 }
 
 .tabs-wrapper {
-
     display: flex;
     flex-direction: column;
     gap: .5rem;
@@ -31,6 +30,8 @@
 
 textarea {
     height: 20rem;
+    white-space: nowrap;
+    overflow-x: scroll;
 }
 
 pre {
