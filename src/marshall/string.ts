@@ -58,7 +58,7 @@ export function tabToString(tab: Tab): string {
 		out += halfStepsToNote(channel.rootHalfStepsFromA4) + CHANNEL_WRAP
 		let notes = ""
 		for (const note of channel.notes) {
-			notes += EMPTY_NOTE.repeat(note.deltaTime - 1)
+			notes += EMPTY_NOTE.repeat(Math.max(note.deltaTime - 1, 0))
 			notes += note.halfStepsFromA4
 		}
 		notes = notes.padEnd(tab.noteCount, EMPTY_NOTE)

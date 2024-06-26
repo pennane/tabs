@@ -46,14 +46,14 @@ export function createTabElements(tabs: Tabs): HTMLDivElement {
 	const out = document.createElement("div")
 	out.classList.add("tabs-wrapper")
 
-	tabs.tabs.forEach((channels) => {
+	tabs.tabs.forEach((tab) => {
 		const wrapper = document.createElement("div")
 		wrapper.classList.add("wrapper")
 		const view = document.createElement("pre")
-		view.textContent = tabToString(channels)
+		view.textContent = tabToString(tab)
 		const playButton = document.createElement("button")
 		playButton.textContent = "play"
-		playButton.addEventListener("click", () => playTab(channels, tabs.bpm))
+		playButton.addEventListener("click", () => playTab(tab, tabs.bpm))
 
 		wrapper.appendChild(view)
 		wrapper.appendChild(playButton)

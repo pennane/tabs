@@ -146,10 +146,10 @@ export function deserialize(base64: string): Tabs {
 		const { value: tabSize, length: tabVlqLength } = decodeVlq(dataView, offset)
 		offset += tabVlqLength
 
+		const tabEnd = offset + tabSize
+
 		const noteCount = dataView.getUint32(offset)
 		offset += NOTE_COUNT_BYTES
-
-		const tabEnd = offset + tabSize
 
 		while (offset < tabEnd) {
 			const { value: channelSize, length: channelVlqLength } = decodeVlq(dataView, offset)
