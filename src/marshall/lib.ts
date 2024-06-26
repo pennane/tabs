@@ -1,3 +1,5 @@
+import { Tabs, Channel, Tab } from "../model"
+
 export function bufferToBase64(buffer: ArrayBuffer): string {
 	const base64Chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
@@ -43,4 +45,61 @@ export function base64ToBuffer(base64: string): ArrayBuffer {
 	}
 
 	return bytes.buffer
+}
+
+export function mergeTabs(tabs: Tabs): Tabs {
+	let totalNoteCount = 0
+
+	const mergedChannels = new Map<number, Channel>()
+
+	for (const { channels, noteCount } of tabs.tabs) {
+		for (const channel of channels) {
+			if (!mergedChannels.has(channel.rootHalfStepsFromA4)) {
+				const totalTime = channel.notes.reduce((time, note) => time + note.deltaTime, 0)
+				const firstNote = channel.notes[0]
+
+				if (!totalNoteCount || !firstNote) {
+					mergedChannels.set(channel.rootHalfStepsFromA4, { ...channel })
+					continue
+				}
+
+				const missingDelta = totalNoteCount - totalTime
+
+				mergedChannels.set(channel.rootHalfStepsFromA4, {
+					...channel,
+					notes: channel.notes.with(0, {
+						...firstNote,
+						deltaTime: firstNote.deltaTime + missingDelta,
+					}),
+				})
+				continue
+			}
+			const merged = mergedChannels.get(channel.rootHalfStepsFromA4)!
+			const totalTime = merged.notes.reduce((time, note) => time + note.deltaTime, 0)
+			const missingDelta = totalNoteCount - totalTime
+			const [firstNote, ...notes] = channel.notes
+
+			if (firstNote) {
+				merged.notes = merged.notes
+					.concat([{ ...firstNote, deltaTime: firstNote.deltaTime + missingDelta }])
+					.concat(notes)
+			}
+		}
+		totalNoteCount += noteCount
+	}
+
+	const mergedTab: Tab = {
+		channels: [...mergedChannels.values()].toSorted(
+			(a, b) => b.rootHalfStepsFromA4 - a.rootHalfStepsFromA4
+		),
+		noteCount: totalNoteCount,
+	}
+
+	const mergedTabs: Tabs = {
+		...tabs,
+		tabs: [mergedTab],
+	}
+
+
+	return mergedTabs
 }

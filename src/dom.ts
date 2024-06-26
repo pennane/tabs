@@ -3,6 +3,7 @@ import { DEFAULT_BPM } from "./constants"
 import { Tabs } from "./model"
 import { playTab } from "./audio/play"
 import { tabToString } from "./marshall/string"
+import { mergeTabs } from "./marshall/lib"
 
 export function copyToClipboard(input: HTMLInputElement) {
 	input.select()
@@ -45,6 +46,19 @@ export function createBpmInput() {
 export function createTabElements(tabs: Tabs): HTMLDivElement {
 	const out = document.createElement("div")
 	out.classList.add("tabs-wrapper")
+
+	if (tabs.tabs.length > 1) {
+		const wrapper = document.createElement("div")
+		wrapper.classList.add("wrapper")
+		const merged = mergeTabs(tabs)
+		const tab = merged.tabs[0]
+		const playButton = document.createElement("button")
+		playButton.textContent = "play all combined"
+		playButton.addEventListener("click", () => playTab(tab, merged.bpm))
+
+		wrapper.appendChild(playButton)
+		out.appendChild(wrapper)
+	}
 
 	tabs.tabs.forEach((tab) => {
 		const wrapper = document.createElement("div")
