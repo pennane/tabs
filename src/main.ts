@@ -1,112 +1,67 @@
-import { compress, compressTab, compressTabs, decompress, decompressToTab } from './compress'
-import { DEFAULT_INPUT_VALUE } from './constants'
-import { Tab } from './model'
-import { parseTabs } from './parse'
-import { playTab } from './play'
-import './style.css'
+import "./style.css"
+import { DEFAULT_BPM, DEFAULT_INPUT_VALUE } from "./constants"
+import {
+	createOutputElement,
+	createInputElement,
+	createBpmInput,
+	createShareLink,
+	createTabElements,
+} from "./dom"
+import { deserialize } from "./marshall/binary"
+import { stringToTabs, tabsToString } from "./marshall/string"
 
-const app = document.getElementById("app")!
-const output = document.createElement('div')
-output.classList.add("output")
-const input = document.createElement('textarea')
+function init() {
+	const app = document.getElementById("app")!
+	const output = createOutputElement()
+	const input = createInputElement()
+	const { bpmInput, bpmInputWrapper } = createBpmInput()
 
-const u = new URLSearchParams(window.location.search)
-if (u.has("tab")) {
-    input.value = decompress(u.get("tab")!) || DEFAULT_INPUT_VALUE
-} else {
-    input.value = DEFAULT_INPUT_VALUE
+	parseUrl(input, bpmInput)
+
+	let timeout: number | undefined = undefined
+	const updatingInputs = [input, bpmInput]
+
+	updatingInputs.forEach((inputElement) =>
+		inputElement.addEventListener("input", () => {
+			clearTimeout(timeout)
+			timeout = setTimeout(() => parseInputs(input, bpmInput, output), 300)
+		})
+	)
+
+	parseInputs(input, bpmInput, output)
+
+	app.appendChild(input)
+	app.appendChild(bpmInputWrapper)
+	app.appendChild(output)
 }
 
+function parseUrl(input: HTMLTextAreaElement, bpmInput: HTMLInputElement) {
+	const params = new URLSearchParams(window.location.search)
 
-function handleParse() {
-    const tabs = parseTabs(input.value)
-    output.innerHTML = ""
-    output.appendChild(createShareLink(tabs))
-    output.appendChild(createTabElements(tabs))
+	const serialized = params.get("tab")
+	const tabs = serialized && deserialize(serialized)
+
+	if (!tabs) {
+		input.value = DEFAULT_INPUT_VALUE
+		bpmInput.value = DEFAULT_BPM.toString()
+		return
+	}
+
+	input.value = tabsToString(tabs) || DEFAULT_INPUT_VALUE
+	bpmInput.value = String(tabs?.bpm || DEFAULT_BPM)
 }
 
-function createTabElements(tabs: Tab[]) {
-    const out = document.createElement('div')
-    out.classList.add("tabs-wrapper")
-
-    if (tabs.length > 1) {
-        const wrapper = document.createElement('div')
-        wrapper.classList.add("wrapper")
-        const playButton = document.createElement('button')
-        playButton.textContent = "play all combined"
-        playButton.addEventListener('click', () => playTab(tabs.reduce((a, b) =>
-        ({
-            ...b,
-            channels: b.channels.map((c, i) => ({
-                ...c,
-                frets: a.channels[i].frets.concat(c.frets)
-            }))
-        })
-        )))
-
-        wrapper.appendChild(playButton)
-        out.appendChild(wrapper)
-    }
-
-
-    for (const tab of tabs) {
-        const wrapper = document.createElement('div')
-        wrapper.classList.add("wrapper")
-        const view = document.createElement('pre')
-        view.textContent = tab.channels.map(c => c.frets.map(f => f === null ? "-" : f.toString()).join('')).join('\n')
-        const playButton = document.createElement('button')
-        playButton.textContent = "play"
-        playButton.addEventListener('click', () => playTab(tab))
-
-        wrapper.appendChild(view)
-        wrapper.appendChild(playButton)
-        out.appendChild(wrapper)
-    }
-    return out
+function parseInputs(
+	input: HTMLTextAreaElement,
+	bpmInput: HTMLInputElement,
+	output: HTMLDivElement
+) {
+	const tabs = stringToTabs(input.value)
+	output.innerHTML = ""
+	if (!tabs) return
+	tabs.bpm = parseInt(bpmInput.value) || DEFAULT_BPM
+	output.appendChild(createShareLink(tabs))
+	output.appendChild(createTabElements(tabs))
 }
 
-function createShareLink(tabs: Tab[]) {
-    const compressed = compressTabs(tabs)
-    const u = new URL(window.location.href)
-    u.searchParams.set("tab", compressed)
-
-    const str = u.toString()
-
-    const wrapper = document.createElement('div')
-    wrapper.classList.add("sharelink-wrapper")
-
-    const shareLink = document.createElement('input')
-    shareLink.classList.add('sharelink')
-    shareLink.type = "text"
-    shareLink.readOnly = true
-    shareLink.value = str
-
-    const button = document.createElement('button')
-    button.textContent = "copy link"
-    button.addEventListener('click', () => {
-        const copyText = shareLink
-        copyText.select()
-        copyText.setSelectionRange(0, 99999)
-        try {
-            document.execCommand("copy")
-        } catch { }
-    })
-
-    wrapper.appendChild(shareLink)
-    wrapper.appendChild(button)
-
-    return wrapper
-
-}
-
-
-let timeout: number | undefined = undefined
-input.addEventListener('input', () => {
-    clearTimeout(timeout)
-    timeout = setTimeout(() => handleParse(), 300)
-})
-
-handleParse()
-
-app.appendChild(input)
-app.appendChild(output)
+init()
