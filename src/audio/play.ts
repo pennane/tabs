@@ -32,7 +32,7 @@ export async function playTab(tab: Tab, bpm: number) {
 		for (let i = 0; i < channel.notes.length; i++) {
 			const note = channel.notes[i]
 
-			const frequency = halfStepsToFrequency(rootSteps + note.halfStepsFromA4)
+			const frequency = halfStepsToFrequency(rootSteps + note.halfStepsFromA4 - 12)
 			last += note.deltaTime
 			const start = startTime + last * sixteenthLength + precomputedOffsets[j]
 			const end = start + noteDuration
